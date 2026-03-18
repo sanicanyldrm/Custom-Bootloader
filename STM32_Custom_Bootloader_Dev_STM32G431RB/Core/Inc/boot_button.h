@@ -1,9 +1,13 @@
 /******************************************************************************
- * @file    boot_state.c
- * @brief   TODO: Fill
+ * @file    boot_button.h
+ * @brief   Bootloader user button interface
  *
  * @details
- * TODO: Fill
+ * This module provides the interface for reading and processing the user
+ * button used to control bootloader entry behavior.
+ *
+ * It abstracts the hardware access and provides debounced button state
+ * information to the boot state machine.
  *
  * @author  can.yildirim
  * @date    2026-03-18
@@ -11,10 +15,11 @@
  * @version 1.0.0
  *
  * @note
- * - TODO:
+ * - Button is used to request staying in bootloader mode
+ * - Hardware abstraction allows portability
  *
  * @warning
- * - TODO:
+ * - Button debounce must be handled properly to avoid false triggers
  *
  *****************************************************************************/
 

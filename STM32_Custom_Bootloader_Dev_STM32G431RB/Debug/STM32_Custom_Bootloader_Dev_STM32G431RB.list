@@ -7,45 +7,45 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         00003cb0  080001e0  080001e0  000011e0  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000284  08003e90  08003e90  00004e90  2**2
+  2 .rodata       00000248  08003e90  08003e90  00004e90  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08004114  08004114  00006068  2**0
+  3 .ARM.extab    00000000  080040d8  080040d8  00006068  2**0
                   CONTENTS, READONLY
-  4 .ARM          00000008  08004114  08004114  00005114  2**2
+  4 .ARM          00000008  080040d8  080040d8  000050d8  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .preinit_array 00000000  0800411c  0800411c  00006068  2**0
+  5 .preinit_array 00000000  080040e0  080040e0  00006068  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000004  0800411c  0800411c  0000511c  2**2
+  6 .init_array   00000004  080040e0  080040e0  000050e0  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .fini_array   00000004  08004120  08004120  00005120  2**2
+  7 .fini_array   00000004  080040e4  080040e4  000050e4  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .data         00000068  20000000  08004124  00006000  2**2
+  8 .data         00000068  20000000  080040e8  00006000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          0000021c  20000068  0800418c  00006068  2**2
+  9 .bss          0000021c  20000068  08004150  00006068  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  20000284  0800418c  00006284  2**0
+ 10 ._user_heap_stack 00000604  20000284  08004150  00006284  2**0
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00006068  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000c813  00000000  00000000  00006098  2**0
+ 12 .debug_info   0000c6cd  00000000  00000000  00006098  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002330  00000000  00000000  000128ab  2**0
+ 13 .debug_abbrev 00002306  00000000  00000000  00012765  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000ac0  00000000  00000000  00014be0  2**3
+ 14 .debug_aranges 00000ab0  00000000  00000000  00014a70  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000807  00000000  00000000  000156a0  2**0
+ 15 .debug_rnglists 000007fb  00000000  00000000  00015520  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001eb1f  00000000  00000000  00015ea7  2**0
+ 16 .debug_macro  0001eb1f  00000000  00000000  00015d1b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000ec17  00000000  00000000  000349c6  2**0
+ 17 .debug_line   0000ebcf  00000000  00000000  0003483a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000b84e0  00000000  00000000  000435dd  2**0
+ 18 .debug_str    000b84bf  00000000  00000000  00043409  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000fbabd  2**0
+ 19 .comment      00000043  00000000  00000000  000fb8c8  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002e24  00000000  00000000  000fbb00  2**2
+ 20 .debug_frame  00002dec  00000000  00000000  000fb90c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000085  00000000  00000000  000fe924  2**0
+ 21 .debug_line_str 00000085  00000000  00000000  000fe6f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -646,10 +646,10 @@ void bb_BootButtonInit(void)
  80006f0:	48000800 	.word	0x48000800
 
 080006f4 <bj_BootIsAppValid>:
-static void BootStayMode(void);
-static void ResetSysTick(void);
-
-
+ * @return     TRUE  - Application is valid
+ *             FALSE - Application is invalid
+ *
+ *****************************************************************************/
 bool bj_BootIsAppValid(void)
 {
  80006f4:	b480      	push	{r7}
@@ -734,8 +734,10 @@ bool bj_BootIsAppValid(void)
  8000760:	0801ffff 	.word	0x0801ffff
 
 08000764 <bj_BootJumpToApp>:
-
-
+ * * @warning
+ * - This function must only be called after successful application validation
+ * - Interrupts must remain disabled until application takes control
+ *****************************************************************************/
 void bj_BootJumpToApp(void)
 {
  8000764:	b580      	push	{r7, lr}
@@ -830,10 +832,10 @@ __STATIC_FORCEINLINE void __set_MSP(uint32_t topOfMainStack)
  80007dc:	e000ed00 	.word	0xe000ed00
 
 080007e0 <ResetSysTick>:
-	}
-
-}
-
+ *
+ * @return     None
+ *
+ *****************************************************************************/
 static void ResetSysTick(void)
 {
  80007e0:	b480      	push	{r7}
@@ -859,7 +861,7 @@ static void ResetSysTick(void)
 
 08000804 <BootLedProcessPattern>:
  *
- * @return TODO:
+ * @return     None
  *
  *****************************************************************************/
 static void BootLedProcessPattern(uint32_t toggle_period_ms)
@@ -899,7 +901,7 @@ static void BootLedProcessPattern(uint32_t toggle_period_ms)
 
 08000838 <bl_BootLedOff>:
  *
- * @return TODO:
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedOff(void)
@@ -923,7 +925,7 @@ void bl_BootLedOff(void)
 
 0800084c <bl_BootLedToggle>:
  *
- * @return TODO:
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedToggle(void)
@@ -940,7 +942,7 @@ void bl_BootLedToggle(void)
 
 0800085e <bl_BootLedProcessWaitPattern>:
  *
- * @return TODO:
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedProcessWaitPattern(void)
@@ -956,7 +958,7 @@ void bl_BootLedProcessWaitPattern(void)
 
 0800086c <bl_BootLedProcessStayPattern>:
  *
- * @return TODO:
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedProcessStayPattern(void)
@@ -972,7 +974,7 @@ void bl_BootLedProcessStayPattern(void)
 
 0800087c <BootHandleStartupState>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleStartupState(void)
@@ -1029,15 +1031,15 @@ static void BootHandleStartupState(void)
  80008ca:	bf00      	nop
  80008cc:	bd80      	pop	{r7, pc}
  80008ce:	bf00      	nop
- 80008d0:	08003f14 	.word	0x08003f14
- 80008d4:	08003f28 	.word	0x08003f28
+ 80008d0:	08003ed8 	.word	0x08003ed8
+ 80008d4:	08003eec 	.word	0x08003eec
  80008d8:	20000090 	.word	0x20000090
- 80008dc:	08003f5c 	.word	0x08003f5c
- 80008e0:	08003f78 	.word	0x08003f78
+ 80008dc:	08003f20 	.word	0x08003f20
+ 80008e0:	08003f3c 	.word	0x08003f3c
 
 080008e4 <BootHandleWaitForRequestState>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleWaitForRequestState(void)
@@ -1100,12 +1102,12 @@ static void BootHandleWaitForRequestState(void)
  8000934:	bd80      	pop	{r7, pc}
  8000936:	bf00      	nop
  8000938:	20000090 	.word	0x20000090
- 800093c:	08003fa4 	.word	0x08003fa4
- 8000940:	08003fd4 	.word	0x08003fd4
+ 800093c:	08003f68 	.word	0x08003f68
+ 8000940:	08003f98 	.word	0x08003f98
 
 08000944 <BootHandleStayInBootloaderState>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleStayInBootloaderState(void)
@@ -1125,7 +1127,7 @@ static void BootHandleStayInBootloaderState(void)
 
 08000950 <BootHandleJumpToAppState>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleJumpToAppState(void)
@@ -1148,12 +1150,12 @@ static void BootHandleJumpToAppState(void)
 }
  8000968:	bf00      	nop
  800096a:	bd80      	pop	{r7, pc}
- 800096c:	08004004 	.word	0x08004004
+ 800096c:	08003fc8 	.word	0x08003fc8
  8000970:	20000090 	.word	0x20000090
 
 08000974 <bs_BootStateInit>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 void bs_BootStateInit(void)
@@ -1182,11 +1184,11 @@ void bs_BootStateInit(void)
  8000990:	bf00      	nop
  8000992:	bd80      	pop	{r7, pc}
  8000994:	20000090 	.word	0x20000090
- 8000998:	08004038 	.word	0x08004038
+ 8000998:	08003ffc 	.word	0x08003ffc
 
 0800099c <bs_BootStateMachine>:
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 void bs_BootStateMachine(void)
@@ -1250,7 +1252,7 @@ void bs_BootStateMachine(void)
  80009e8:	bd80      	pop	{r7, pc}
  80009ea:	bf00      	nop
  80009ec:	20000090 	.word	0x20000090
- 80009f0:	0800405c 	.word	0x0800405c
+ 80009f0:	08004020 	.word	0x08004020
 
 080009f4 <MX_GPIO_Init>:
         * Output
@@ -1366,7 +1368,7 @@ int main(void)
 		bs_BootStateMachine();
  8000a9e:	f7ff ff7d 	bl	800099c <bs_BootStateMachine>
  8000aa2:	e7fc      	b.n	8000a9e <main+0x22>
- 8000aa4:	0800408c 	.word	0x0800408c
+ 8000aa4:	08004050 	.word	0x08004050
 
 08000aa8 <SystemClock_Config>:
 /**
@@ -2287,7 +2289,7 @@ LoopForever:
   ldr r1, =_edata
  8000ec8:	20000068 	.word	0x20000068
   ldr r2, =_sidata
- 8000ecc:	08004124 	.word	0x08004124
+ 8000ecc:	080040e8 	.word	0x080040e8
   ldr r2, =_sbss
  8000ed0:	20000068 	.word	0x20000068
   ldr r4, =_ebss
@@ -5301,7 +5303,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(const RCC_ClkInitTypeDef  *RCC_ClkInitStru
  8001fc8:	40022000 	.word	0x40022000
  8001fcc:	40021000 	.word	0x40021000
  8001fd0:	04c4b400 	.word	0x04c4b400
- 8001fd4:	080040a0 	.word	0x080040a0
+ 8001fd4:	08004064 	.word	0x08004064
  8001fd8:	20000000 	.word	0x20000000
  8001fdc:	20000004 	.word	0x20000004
 
@@ -5482,7 +5484,7 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
  80020dc:	4618      	mov	r0, r3
  80020de:	bd80      	pop	{r7, pc}
  80020e0:	40021000 	.word	0x40021000
- 80020e4:	080040b0 	.word	0x080040b0
+ 80020e4:	08004074 	.word	0x08004074
 
 080020e8 <HAL_RCC_GetPCLK2Freq>:
   * @note   Each time PCLK2 changes, this function must be called to update the
@@ -5509,7 +5511,7 @@ uint32_t HAL_RCC_GetPCLK2Freq(void)
  8002108:	4618      	mov	r0, r3
  800210a:	bd80      	pop	{r7, pc}
  800210c:	40021000 	.word	0x40021000
- 8002110:	080040b0 	.word	0x080040b0
+ 8002110:	08004074 	.word	0x08004074
 
 08002114 <RCC_GetSysClockFreqFromPLLSource>:
 /**
@@ -6719,7 +6721,7 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
  8002910:	46bd      	mov	sp, r7
  8002912:	e8bd 8fb0 	ldmia.w	sp!, {r4, r5, r7, r8, r9, sl, fp, pc}
  8002916:	bf00      	nop
- 8002918:	080040b8 	.word	0x080040b8
+ 8002918:	0800407c 	.word	0x0800407c
  800291c:	00f42400 	.word	0x00f42400
 
 08002920 <UART_AdvFeatureConfig>:
@@ -7822,8 +7824,8 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  8002f54:	f85d 7b04 	ldr.w	r7, [sp], #4
  8002f58:	4770      	bx	lr
  8002f5a:	bf00      	nop
- 8002f5c:	080040d0 	.word	0x080040d0
- 8002f60:	080040d8 	.word	0x080040d8
+ 8002f5c:	08004094 	.word	0x08004094
+ 8002f60:	0800409c 	.word	0x0800409c
 
 08002f64 <std>:
  8002f64:	2300      	movs	r3, #0
@@ -8396,10 +8398,10 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  8003452:	4798      	blx	r3
  8003454:	3601      	adds	r6, #1
  8003456:	e7f2      	b.n	800343e <__libc_init_array+0x1e>
- 8003458:	0800411c 	.word	0x0800411c
- 800345c:	0800411c 	.word	0x0800411c
- 8003460:	0800411c 	.word	0x0800411c
- 8003464:	08004120 	.word	0x08004120
+ 8003458:	080040e0 	.word	0x080040e0
+ 800345c:	080040e0 	.word	0x080040e0
+ 8003460:	080040e0 	.word	0x080040e0
+ 8003464:	080040e4 	.word	0x080040e4
 
 08003468 <__retarget_lock_init_recursive>:
  8003468:	4770      	bx	lr
@@ -8897,11 +8899,11 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  80038c0:	f000 f87a 	bl	80039b8 <_printf_i>
  80038c4:	e7e5      	b.n	8003892 <_vfiprintf_r+0x1de>
  80038c6:	bf00      	nop
- 80038c8:	080040e0 	.word	0x080040e0
- 80038cc:	080040ea 	.word	0x080040ea
+ 80038c8:	080040a4 	.word	0x080040a4
+ 80038cc:	080040ae 	.word	0x080040ae
  80038d0:	00000000 	.word	0x00000000
  80038d4:	0800368f 	.word	0x0800368f
- 80038d8:	080040e6 	.word	0x080040e6
+ 80038d8:	080040aa 	.word	0x080040aa
 
 080038dc <_printf_common>:
  80038dc:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -9235,8 +9237,8 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
  8003bf4:	f104 0619 	add.w	r6, r4, #25
  8003bf8:	e7f5      	b.n	8003be6 <_printf_i+0x22e>
  8003bfa:	bf00      	nop
- 8003bfc:	080040f1 	.word	0x080040f1
- 8003c00:	08004102 	.word	0x08004102
+ 8003bfc:	080040b5 	.word	0x080040b5
+ 8003c00:	080040c6 	.word	0x080040c6
 
 08003c04 <__sflush_r>:
  8003c04:	f9b1 200c 	ldrsh.w	r2, [r1, #12]

@@ -1,6 +1,6 @@
-../Core/Src/boot_state.c:78:13:BootHandleStartupState	2
-../Core/Src/boot_state.c:110:13:BootHandleWaitForRequestState	4
-../Core/Src/boot_state.c:147:13:BootHandleStayInBootloaderState	1
-../Core/Src/boot_state.c:169:13:BootHandleJumpToAppState	1
-../Core/Src/boot_state.c:190:6:bs_BootStateInit	1
-../Core/Src/boot_state.c:212:6:bs_BootStateMachine	5
+../Core/Src/boot_state.c:93:13:BootHandleStartupState	2
+../Core/Src/boot_state.c:127:13:BootHandleWaitForRequestState	4
+../Core/Src/boot_state.c:165:13:BootHandleStayInBootloaderState	1
+../Core/Src/boot_state.c:189:13:BootHandleJumpToAppState	1
+../Core/Src/boot_state.c:215:6:bs_BootStateInit	1
+../Core/Src/boot_state.c:253:6:bs_BootStateMachine	5

@@ -1,9 +1,18 @@
 /******************************************************************************
- * @file    boot_state.c
- * @brief   TODO: Fill
+ * @file    boot_led.c
+ * @brief   Bootloader LED control and pattern processing implementation
  *
  * @details
- * TODO: Fill
+ * This source file implements the LED control functions used by the
+ * bootloader to provide visual status indication.
+ *
+ * The module supports:
+ * - Turning the bootloader status LED on and off
+ * - Toggling the LED output state
+ * - Processing non-blocking LED blink patterns based on system tick
+ *
+ * Different blink periods are used to indicate different bootloader states,
+ * such as waiting for a user request or staying in bootloader mode.
  *
  * @author  can.yildirim
  * @date    2026-03-18
@@ -11,10 +20,14 @@
  * @version 1.0.0
  *
  * @note
- * - TODO:
+ * - Designed for STM32G431RB Nucleo board
+ * - LED timing is based on HAL_GetTick()
+ * - Blink patterns are implemented in a non-blocking manner
  *
  * @warning
- * - TODO:
+ * - GPIO configuration for the LED pin must be initialized before using
+ *   this module
+ * - Tick-based timing accuracy depends on the system time base
  *
  *****************************************************************************/
 
@@ -46,14 +59,19 @@
 static void BootLedProcessPattern(uint32_t toggle_period_ms);
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Processes a non-blocking LED toggle pattern
  *
  * @details
- * TODO:
+ * This internal function toggles the bootloader status LED periodically
+ * based on the given toggle period.
  *
- * @param[in] param Description TODO:
+ * It uses the system tick counter to check elapsed time and changes the
+ * LED state only when the requested period has expired. This allows LED
+ * blinking without blocking the main bootloader execution flow.
  *
- * @return TODO:
+ * @param[in]  toggle_period_ms   LED toggle period in milliseconds
+ *
+ * @return     None
  *
  *****************************************************************************/
 static void BootLedProcessPattern(uint32_t toggle_period_ms)
@@ -69,14 +87,18 @@ static void BootLedProcessPattern(uint32_t toggle_period_ms)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Turns the bootloader status LED on
  *
  * @details
- * TODO:
+ * This function sets the LED output pin to its active state according to
+ * the configured active level definition.
  *
- * @param[in] param Description TODO:
+ * It abstracts the hardware polarity so the caller does not need to know
+ * whether the LED is active-high or active-low.
  *
- * @return TODO:
+ * @param[in]  None
+ *
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedOn(void)
@@ -91,14 +113,18 @@ void bl_BootLedOn(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Turns the bootloader status LED off
  *
  * @details
- * TODO:
+ * This function sets the LED output pin to its inactive state according to
+ * the configured active level definition.
  *
- * @param[in] param Description TODO:
+ * It abstracts the hardware polarity so the caller does not need to know
+ * whether the LED is active-high or active-low.
  *
- * @return TODO:
+ * @param[in]  None
+ *
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedOff(void)
@@ -113,14 +139,18 @@ void bl_BootLedOff(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Toggles the bootloader status LED state
  *
  * @details
- * TODO:
+ * This function inverts the current output state of the configured
+ * bootloader LED pin.
  *
- * @param[in] param Description TODO:
+ * It is typically used by periodic LED pattern functions to generate
+ * visible blink indications for different bootloader states.
  *
- * @return TODO:
+ * @param[in]  None
+ *
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedToggle(void)
@@ -129,14 +159,18 @@ void bl_BootLedToggle(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Processes the LED pattern for bootloader wait state
  *
  * @details
- * TODO:
+ * This function updates the LED blink pattern used while the bootloader is
+ * waiting for a user request within the configured boot window.
  *
- * @param[in] param Description TODO:
+ * The blink timing is based on BOOT_LED_WAIT_PERIOD_MS and is processed
+ * in a non-blocking manner.
  *
- * @return TODO:
+ * @param[in]  None
+ *
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedProcessWaitPattern(void)
@@ -145,14 +179,18 @@ void bl_BootLedProcessWaitPattern(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief   Processes the LED pattern for bootloader stay mode
  *
  * @details
- * TODO:
+ * This function updates the LED blink pattern used when the system remains
+ * in bootloader mode.
  *
- * @param[in] param Description TODO:
+ * The blink timing is based on BOOT_LED_STAY_PERIOD_MS and is processed
+ * in a non-blocking manner.
  *
- * @return TODO:
+ * @param[in]  None
+ *
+ * @return     None
  *
  *****************************************************************************/
 void bl_BootLedProcessStayPattern(void)

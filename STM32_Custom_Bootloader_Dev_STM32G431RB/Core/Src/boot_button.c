@@ -1,9 +1,13 @@
 /******************************************************************************
- * @file    boot_state.c
- * @brief   TODO: Fill
+ * @file    boot_button.c
+ * @brief   Bootloader user button handling implementation
  *
  * @details
- * TODO: Fill
+ * This source file implements the button handling logic for the bootloader.
+ * It reads the hardware pin state and provides a stable button status to
+ * the boot state machine.
+ *
+ * Optional debounce and edge detection mechanisms can be implemented here.
  *
  * @author  can.yildirim
  * @date    2026-03-18
@@ -11,10 +15,11 @@
  * @version 1.0.0
  *
  * @note
- * - TODO:
+ * - Designed for STM32G431RB Nucleo board user button
+ * - Can be extended for interrupt-based detection
  *
  * @warning
- * - TODO:
+ * - Direct GPIO reads without debounce may cause unstable behavior
  *
  *****************************************************************************/
 

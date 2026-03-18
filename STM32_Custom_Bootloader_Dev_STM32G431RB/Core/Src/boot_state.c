@@ -1,9 +1,16 @@
 /******************************************************************************
  * @file    boot_state.c
- * @brief   TODO: Fill
+ * @brief   Bootloader state machine management functions
  *
  * @details
- * TODO: Fill
+ * This source file contains the main boot state handling logic of the
+ * custom bootloader. It is responsible for initializing the boot state,
+ * processing bootloader timeout behavior, monitoring user button requests,
+ * and deciding whether the system should remain in bootloader mode or jump
+ * to the user application.
+ *
+ * The state flow is designed for STM32G431RB based projects and supports
+ * a timed boot window implementation without using blocking delay loops.
  *
  * @author  can.yildirim
  * @date    2026-03-18
@@ -11,10 +18,15 @@
  * @version 1.0.0
  *
  * @note
- * - TODO:
+ * - Designed for STM32G431RB Nucleo board
+ * - Used as part of the custom bootloader project
+ * - Bootloader entry decision is based on button status and timeout handling
  *
  * @warning
- * - TODO:
+ * - Jump to application must only be performed after validating the
+ *   application start address and vector table
+ * - State transitions must remain deterministic to avoid unintended
+ *   bootloader lock conditions
  *
  *****************************************************************************/
 
@@ -65,14 +77,17 @@ static void BootHandleStayInBootloaderState(void);
 static void BootHandleJumpToAppState(void);
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Bootloader startup state performs application validity check.
  *
  * @details
- * TODO:
+ * Check the application validity and according to the result sets bootloader
+ * state. If application is valid, gets current tick to wait 5 second button
+ * response. Sets bootloader state to wait for request state. Resets the button
+ * latched status.
  *
- * @param[in] param Description TODO:
+ * @param[in] param Description None
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleStartupState(void)
@@ -97,14 +112,16 @@ static void BootHandleStartupState(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Bootloader wait for request state waits from user input.
  *
  * @details
- * TODO:
+ * Inform the state status from the on board LED. Checks the button is whether
+ * pressed. If button is pressed, set state to stay in bootloader state. If time
+ * is expired(5 second is elapsed), sets the bootloader state to jump to app state.
  *
- * @param[in] param Description TODO:
+ * @param[in] param Description None
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleWaitForRequestState(void)
@@ -134,14 +151,15 @@ static void BootHandleWaitForRequestState(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Bootloader stay in bootloader state waits in bootloader
  *
  * @details
- * TODO:
+ * This state informs the state status over on board LED. Toggles the LED
+ * periodically.
  *
- * @param[in] param Description TODO:
+ * @param[in] param Description None
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleStayInBootloaderState(void)
@@ -156,14 +174,16 @@ static void BootHandleStayInBootloaderState(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Bootloader jump to application state jumps to main appliation
  *
  * @details
- * TODO:
+ * This state is perform jumping operation and reset the LED. If error occurs
+ * while jumping to application, sets the bootloader state to stay in bootloader
+ * state.
  *
- * @param[in] param Description TODO:
+ * @param[in] param Description None
  *
- * @return TODO:
+ * @return None
  *
  *****************************************************************************/
 static void BootHandleJumpToAppState(void)
@@ -177,14 +197,19 @@ static void BootHandleJumpToAppState(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Initializes the bootloader state machine context
  *
  * @details
- * TODO:
+ * This function initializes the bootloader state machine by setting the
+ * initial state and resetting all related context variables.
  *
- * @param[in] param Description TODO:
+ * - Sets the initial state to BOOT_STATE_STARTUP
+ * - Clears the bootloader timeout reference (wait_start_tick)
+ * - Resets button latch status
  *
- * @return TODO:
+ * @param[in] param Description None
+ *
+ * @return None
  *
  *****************************************************************************/
 void bs_BootStateInit(void)
@@ -199,14 +224,30 @@ void bs_BootStateInit(void)
 }
 
 /******************************************************************************
- * @brief    TODO:
+ * @brief    Executes the bootloader state machine
  *
  * @details
- * TODO:
+ * This function is the main dispatcher of the bootloader state machine.
+ * It evaluates the current boot state stored in the BootContext structure
+ * and calls the corresponding state handler function.
  *
- * @param[in] param Description TODO:
+ * The state machine controls the overall bootloader behavior including:
+ * - Startup initialization sequence
+ * - Waiting for user input (button press) within a defined timeout
+ * - Staying in bootloader mode if requested
+ * - Jumping to the user application if no request is received
  *
- * @return TODO:
+ * Each state is handled by a dedicated function to ensure modularity and
+ * maintainability of the bootloader design.
+ *
+ * In case of an invalid or undefined state, the system falls back to
+ * BOOT_STATE_STAY_IN_BL as a safe state to prevent unintended jumps.
+ *
+ * This function is expected to be called periodically from the main loop.
+ *
+ * @param[in] param Description None
+ *
+ * @return None
  *
  *****************************************************************************/
 void bs_BootStateMachine(void)
