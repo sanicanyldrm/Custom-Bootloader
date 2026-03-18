@@ -1,0 +1,5 @@
+../Core/Src/boot_jump.c:21:6:bj_BootIsAppValid	5
+../Core/Src/boot_jump.c:59:6:bj_BootJumpToApp	1
+../Core/Src/boot_jump.c:91:13:BootStayMode	1
+../Core/Src/boot_jump.c:105:13:ResetSysTick	1
+../Core/Src/boot_jump.c:113:6:bj_BootMainDesicion	2

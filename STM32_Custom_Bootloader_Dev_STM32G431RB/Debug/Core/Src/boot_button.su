@@ -1,0 +1,4 @@
+../Core/Src/boot_button.c:62:16:ButtonGetPhysicalLevel	8	static
+../Core/Src/boot_button.c:78:9:bb_BootButtonReadRaw	16	static
+../Core/Src/boot_button.c:124:9:bb_BootButtonIsPressedStable	16	static
+../Core/Src/boot_button.c:180:6:bb_BootButtonInit	32	static

@@ -1,0 +1,5 @@
+../Core/Src/boot_jump.c:21:6:bj_BootIsAppValid	24	static
+../Core/Src/boot_jump.c:59:6:bj_BootJumpToApp	24	static,ignoring_inline_asm
+../Core/Src/boot_jump.c:91:13:BootStayMode	8	static
+../Core/Src/boot_jump.c:105:13:ResetSysTick	4	static
+../Core/Src/boot_jump.c:113:6:bj_BootMainDesicion	8	static

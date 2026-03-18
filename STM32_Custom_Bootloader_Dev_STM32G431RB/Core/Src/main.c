@@ -20,6 +20,10 @@
 #include "main.h"
 #include "gpio.h"
 #include "usart.h"
+#include "boot_jump.h"
+#include "boot_button.h"
+#include "std_def.h"
+#include "boot_state.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -28,13 +32,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-typedef void (*pFunction)(void);
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define APP_ADDRESS				0x08008000U				// Application stack pointer
-#define APP_RESET_ADDRESS		(APP_ADDRESS + 4U)		// Application reset handler address
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,44 +54,15 @@ typedef void (*pFunction)(void);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-static void BootJumpToApp(void);
-static void ResetSysTick(void);
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void BootJumpToApp(void)
-{
-	uint32_t app_stack_pointer = *(volatile uint32_t*)APP_ADDRESS;
-	uint32_t app_reset_handler = *(volatile uint32_t*)(APP_RESET_ADDRESS);
 
-	pFunction jump_to_app = (pFunction)app_reset_handler;
 
-	__disable_irq();
 
-	ResetSysTick();
-
-	HAL_DeInit();
-
-	SCB->VTOR = APP_ADDRESS;
-	__set_MSP(app_stack_pointer);
-
-	__enable_irq();
-
-	jump_to_app();
-
-	while (1)
-	{
-		// Do nothing
-	}
-}
-
-static void ResetSysTick(void)
-{
-	SysTick->CTRL = 0U;
-	SysTick->LOAD = 0U;
-	SysTick->VAL = 0U;
-}
 /* USER CODE END 0 */
 
 /**
@@ -97,48 +71,17 @@ static void ResetSysTick(void)
   */
 int main(void)
 {
-
-	/* USER CODE BEGIN 1 */
-
-	/* USER CODE END 1 */
-
-	/* MCU Configuration--------------------------------------------------------*/
-
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
-
-	/* USER CODE BEGIN Init */
-
-	/* USER CODE END Init */
-
-	/* Configure the system clock */
 	SystemClock_Config();
-	/* USER CODE BEGIN SysInit */
-
-	/* USER CODE END SysInit */
-
-	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	USART2_Init();
-	/* USER CODE BEGIN 2 */
+	bb_BootButtonInit();
+	bs_BootStateInit();
+
+
 	printf("Bootloader started\r\n");
 
-	for(uint8_t i = 0; i < 5; i++)
-	{
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  HAL_Delay(100);
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  HAL_Delay(100);
-	}
-
-	printf("Preparing jump to application\r\n");
-	HAL_Delay(200);
-	printf("Jumping to application\r\n");
-	HAL_Delay(100);
-	printf("APP SP   = 0x%08lX\r\n", *(volatile uint32_t*)APP_ADDRESS);
-	printf("APP Reset= 0x%08lX\r\n", *(volatile uint32_t*)(APP_ADDRESS + 4U));
-
-	BootJumpToApp();
+	//bj_BootMainDesicion();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -148,6 +91,7 @@ int main(void)
 	/* USER CODE END WHILE */
 
 	/* USER CODE BEGIN 3 */
+		bs_BootStateMachine();
 	}
 	/* USER CODE END 3 */
 }
