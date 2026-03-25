@@ -28,7 +28,8 @@ Core/Src/boot_state.o: ../Core/Src/boot_state.c ../Core/Inc/boot_state.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
  ../Core/Inc/boot_config.h ../Core/Inc/std_def.h \
- ../Core/Inc/boot_button.h ../Core/Inc/boot_led.h
+ ../Core/Inc/boot_button.h ../Core/Inc/boot_led.h \
+ ../Core/Inc/boot_image.h
 ../Core/Inc/boot_state.h:
 ../Core/Inc/boot_jump.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -62,3 +63,4 @@ Core/Src/boot_state.o: ../Core/Src/boot_state.c ../Core/Inc/boot_state.h \
 ../Core/Inc/std_def.h:
 ../Core/Inc/boot_button.h:
 ../Core/Inc/boot_led.h:
+../Core/Inc/boot_image.h:

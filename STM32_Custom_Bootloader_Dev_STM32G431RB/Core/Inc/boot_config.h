@@ -45,6 +45,12 @@
 #define APP_ADDRESS				0x08008000U				// Application base address
 #define APP_RESET_ADDRESS		(APP_ADDRESS + 4U)		// Application reset handler address
 
+#define APP_PARTITION_SIZE_BYTES   	(96UL * 1024UL)		// Total application size
+#define APP_METADATA_SIZE_BYTES		(256UL)				// Total metadata size
+#define APP_MAX_SIZE_BYTES			(APP_PARTITION_SIZE_BYTES - APP_METADATA_SIZE_BYTES)
+
+#define APP_METADATA_ADDRESS	(0x801FF00U)
+
 #define WORD_FLASH_EMPTY		(0xFFFFFFFFU)
 #define RAM_START_ADDRESS		(0x20000000U)
 #define RAM_VALID_MASK			(0x2FFE0000U)
@@ -54,7 +60,7 @@
 #define BOOT_LED_WAIT_PERIOD_MS		(200U)
 #define BOOT_LED_STAY_PERIOD_MS		(500U)
 
-#define BOOT_BUTTON_DEBOUNCE_MS       (30U)
+#define BOOT_BUTTON_DEBOUNCE_MS      (30U)
 
 
 #define BOOT_BUTTON_PORT              GPIOC
@@ -63,9 +69,14 @@
 
 #define BOOT_BUTTON_ACTIVE_LEVEL      (1U)
 
-#define BOOT_LED_PORT              GPIOA
-#define BOOT_LED_PIN               GPIO_PIN_5
-#define BOOT_LED_ACTIVE_LEVEL      (1U)
+#define BOOT_LED_PORT              	  GPIOA
+#define BOOT_LED_PIN                  GPIO_PIN_5
+#define BOOT_LED_ACTIVE_LEVEL      	  (1U)
+
+#define BOOT_METADATA_MAGIC			  (0x424F4F54UL)
+#define BOOT_METADATA_FORMAT_VERSION  (1U)
+
+
 
 /******************************************************************************
  * TYPE DEFINITIONS

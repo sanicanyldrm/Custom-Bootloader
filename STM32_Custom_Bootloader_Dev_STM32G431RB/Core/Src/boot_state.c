@@ -41,6 +41,7 @@
 #include "std_def.h"
 #include "boot_button.h"
 #include "boot_led.h"
+#include "boot_image.h"
 
 /******************************************************************************
  * MACROS
@@ -101,12 +102,20 @@ static void BootHandleStartupState(void)
 	}
 	else
 	{
-		printf("Boot: Application valid\r\n");
-		printf("Boot: Waiting %lu ms for button request\r\n", (unsigned long)BOOT_WINDOW_MS);
+		if(bi_IsMetaDataValid() == TRUE)
+		{
+			printf("Boot: Application valid\r\n");
+			printf("Boot: Waiting %lu ms for button request\r\n", (unsigned long)BOOT_WINDOW_MS);
 
-		BootContext.wait_start_tick = HAL_GetTick();
-		BootContext.button_latched = 0U;
-		BootContext.state = BOOT_STATE_WAIT_FOR_REQUEST;
+			BootContext.wait_start_tick = HAL_GetTick();
+			BootContext.button_latched = 0U;
+			BootContext.state = BOOT_STATE_WAIT_FOR_REQUEST;
+		}
+		else
+		{
+			BootContext.state = BOOT_STATE_STAY_IN_BL;
+		}
+
 	}
 
 }

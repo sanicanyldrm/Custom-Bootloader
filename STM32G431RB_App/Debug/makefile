@@ -52,9 +52,16 @@ default.size.stdout \
 OBJDUMP_LIST += \
 STM32G431RB_App.list \
 
+OBJCOPY_HEX += \
+STM32G431RB_App.hex \
+
+OBJCOPY_BIN += \
+STM32G431RB_App.bin \
+
 
 # All Target
-all: main-build
+all:
+	+@$(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
 
 # Main-build Target
 main-build: STM32G431RB_App.elf secondary-outputs
@@ -75,12 +82,27 @@ STM32G431RB_App.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+STM32G431RB_App.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "STM32G431RB_App.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+STM32G431RB_App.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "STM32G431RB_App.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) STM32G431RB_App.elf STM32G431RB_App.list STM32G431RB_App.map default.size.stdout
+	-$(RM) STM32G431RB_App.bin STM32G431RB_App.elf STM32G431RB_App.hex STM32G431RB_App.list STM32G431RB_App.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+post-build:
+	arm-none-eabi-objcopy -O binary "STM32G431RB_App.elf" "STM32G431RB_App.bin"
+	python "C:/Desktop/STM32_Development/Custom-Bootloader/STM32G431RB_App\tools\post_build_patch_metadata.py" --elf "STM32G431RB_App.elf" --bin "STM32G431RB_App.bin" --app-start 0x08008000 --metadata-addr 0x0801FF00 --out-bin "STM32G431RB_App_patched.bin" --out-hex "STM32G431RB_App_patched.hex"
+	-@echo ' '
+
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
@@ -89,6 +111,6 @@ fail-specified-linker-script-missing:
 warn-no-linker-script-specified:
 	@echo 'Warning: No linker script specified. Check the linker settings in the build configuration.'
 
-.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified
+.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified post-build
 
 -include ../makefile.targets

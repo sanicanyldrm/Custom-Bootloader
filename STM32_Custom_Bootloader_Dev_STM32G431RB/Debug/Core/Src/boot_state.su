@@ -1,6 +1,6 @@
-../Core/Src/boot_state.c:93:13:BootHandleStartupState	8	static
-../Core/Src/boot_state.c:127:13:BootHandleWaitForRequestState	8	static
-../Core/Src/boot_state.c:165:13:BootHandleStayInBootloaderState	8	static
-../Core/Src/boot_state.c:189:13:BootHandleJumpToAppState	8	static
-../Core/Src/boot_state.c:215:6:bs_BootStateInit	8	static
-../Core/Src/boot_state.c:253:6:bs_BootStateMachine	8	static
+../Core/Src/boot_state.c:94:13:BootHandleStartupState	8	static
+../Core/Src/boot_state.c:136:13:BootHandleWaitForRequestState	8	static
+../Core/Src/boot_state.c:174:13:BootHandleStayInBootloaderState	8	static
+../Core/Src/boot_state.c:198:13:BootHandleJumpToAppState	8	static
+../Core/Src/boot_state.c:224:6:bs_BootStateInit	8	static
+../Core/Src/boot_state.c:262:6:bs_BootStateMachine	8	static

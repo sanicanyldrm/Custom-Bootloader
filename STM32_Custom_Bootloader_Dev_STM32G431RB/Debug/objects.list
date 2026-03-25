@@ -1,5 +1,7 @@
 "./Core/Src/boot_button.o"
 "./Core/Src/boot_config.o"
+"./Core/Src/boot_crc.o"
+"./Core/Src/boot_image.o"
 "./Core/Src/boot_jump.o"
 "./Core/Src/boot_led.o"
 "./Core/Src/boot_state.o"
