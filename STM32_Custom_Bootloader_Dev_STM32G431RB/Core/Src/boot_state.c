@@ -95,29 +95,9 @@ static void BootHandleStartupState(void)
 {
 	printf("Bootloader started\r\n");
 
-	if(bj_BootIsAppValid() == FALSE)
-	{
-		printf("Application is not valid. Staying in bootloader.\r\n");
-		BootContext.state = BOOT_STATE_STAY_IN_BL;
-	}
-	else
-	{
-		if(bi_IsMetaDataValid() == TRUE)
-		{
-			printf("Boot: Application valid\r\n");
-			printf("Boot: Waiting %lu ms for button request\r\n", (unsigned long)BOOT_WINDOW_MS);
-
-			BootContext.wait_start_tick = HAL_GetTick();
-			BootContext.button_latched = 0U;
-			BootContext.state = BOOT_STATE_WAIT_FOR_REQUEST;
-		}
-		else
-		{
-			BootContext.state = BOOT_STATE_STAY_IN_BL;
-		}
-
-	}
-
+	BootContext.wait_start_tick = HAL_GetTick();
+	BootContext.button_latched = 0U;
+	BootContext.state = BOOT_STATE_WAIT_FOR_REQUEST;
 }
 
 /******************************************************************************
@@ -197,12 +177,32 @@ static void BootHandleStayInBootloaderState(void)
  *****************************************************************************/
 static void BootHandleJumpToAppState(void)
 {
-	bl_BootLedOff();
-	bj_BootJumpToApp();
 
-	//Should never return here
-	printf("Boot: ERROR - returned from the application jump\r\n");
-	BootContext.state = BOOT_STATE_STAY_IN_BL;
+	if(bj_BootIsAppValid() == FALSE)
+		{
+			printf("Application is not valid. Staying in bootloader.\r\n");
+			BootContext.state = BOOT_STATE_STAY_IN_BL;
+		}
+		else
+		{
+			if(bi_IsMetaDataValid() == TRUE)
+			{
+				printf("Boot: Application valid\r\n");
+				bl_BootLedOff();
+				bj_BootJumpToApp();
+
+				//Should never return here
+				printf("Boot: ERROR - returned from the application jump\r\n");
+				BootContext.state = BOOT_STATE_STAY_IN_BL;
+			}
+			else
+			{
+				printf("Boot: Application is not valid. Staying in bootloader. \r\n");
+				BootContext.state = BOOT_STATE_STAY_IN_BL;
+			}
+
+		}
+
 }
 
 /******************************************************************************

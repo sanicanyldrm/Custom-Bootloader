@@ -101,7 +101,6 @@ bool bi_IsMetaDataValid()
 
 	ref_crc = pMeta->image_crc32;
 	crc_status = bl_CheckApplicationCrc(&calc_crc, &ref_crc);
-	printf("Boot: crc32 check result: %d\r\n", crc_status);
 
 	switch(crc_status)
 	{
